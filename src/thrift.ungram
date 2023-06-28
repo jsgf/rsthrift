@@ -1,0 +1,55 @@
+Document = Header* Definition*
+
+Header = Include Namespace
+
+Include = 'include' 'string'
+
+Namespace = 'namespace'
+
+Definition = DocComment? (Const | Typedef | Enum | Struct | Union | Exception | Service)
+
+Const = 'const' FieldType Identifier '=' ConstValue ListSeparator?
+
+Typedef = 'typedef' DefinitionType Identifier
+
+Enum = 'enum' Identifier '{' ( Identifier ('=' IntConstant)? ListSeparator? )* '}'
+
+Struct = 'struct' Identifier '{' Field* '}'
+Union = 'union' Identifier '{' Field* '}'
+Exception = 'exception' Identifier '{' Field* '}'
+
+Field = DocComment? FieldId? FieldReq? FieldType Identifier ('=' ConstValue)? ListSeparator?
+FieldId = IntConstant ':'
+FieldReq = 'required' | 'optional'
+
+Service = 'service' Identifier ('extends' Identifier)? '{' Function* '}'
+
+Function = DocComment? 'oneway'? FunctionType Identifier '(' Field* ')' Throws? ListSeparator?
+
+FunctionType = 'void' | FieldType
+Throws = 'throws' '(' Field* ')' ListSeparator?
+
+FieldType = Identifier | BaseType | ContainerType
+BaseType = 'bool' | 'byte' | 'i16' | 'i32' | 'i64' | 'double' | 'string' | 'binary'
+ContainerType = MapType | SetType | ListType
+MapType = 'map' '<' DefinitionType ',' DefinitionType '>'
+SetType = 'set' '<' DefinitionType '>'
+ListType = 'list' '<' DefinitionType '>'
+
+DefinitionType = BaseType | ContainerType
+
+ConstValue = IntConstant | DoubleConstant | StringConstant | Identifier | ConstList | ConstMap
+
+IntConstant = ('+' | '-')? Digit Digit*
+DoubleConstant = ('+' | '-')? Digit* ('.' Digit Digit*)? ('e' IntConstant)?
+
+ConstList = '[' ( ConstValue ListSeparator? )* ']'
+ConstMap = '{' ( ConstValue ':' ConstValue ListSeparator? )* '}'
+
+StringConstant = 'stringconst'
+Digit = 'digit'
+
+ListSeparator = ';' | ','
+Identifier = 'ident'
+
+DocComment = 'doc_comment'
